@@ -1,11 +1,8 @@
 import User, { CreateUser, UpdateUser } from "../models/user.model";
-import { exit } from "process";
 const { v4: uuidv4 } = require("uuid");
-
-import { users } from "../placeholder-data";
 import { BaseService } from "./base.service";
 
-export class UserService extends BaseService {
+class UserService extends BaseService {
   async getAll() {
     await this._getConnection();
     return await User.find();
@@ -36,3 +33,5 @@ export class UserService extends BaseService {
     await User.deleteMany({});
   }
 }
+const userService = new UserService();
+export { userService };

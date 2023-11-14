@@ -2,7 +2,7 @@ import Revenue, { logRevenue, updateRevenue } from "../models/revenue.model";
 const { v4: uuidv4 } = require("uuid");
 import { BaseService } from "./base.service";
 
-export class RevenueService extends BaseService {
+class RevenueService extends BaseService {
   async getAll() {
     await this._getConnection();
     return await Revenue.find();
@@ -32,3 +32,6 @@ export class RevenueService extends BaseService {
     await Revenue.deleteMany({});
   }
 }
+
+const revenueService = new RevenueService();
+export { revenueService };

@@ -12,7 +12,7 @@
 - [x] Implement Prisma Configuration
   - [x] Setup configured, but due to having to run a replica set. something to do as a follow-up
     - [ ] Create MongoDb Replica Set
-- [ ] Upload/seed data
+- [x] Upload/seed data
   - [ ] add script to package json
 
 ### Learning - Take notes in Corresponding Chapter Pages
@@ -27,3 +27,8 @@
 - [ ] Complete [Chapter 8](./training-chapters/CHAPTER-8.md)
 - [ ] Complete [Chapter 9](./training-chapters/CHAPTER-9.md)
 - [ ] Complete [Chapter 10](./training-chapters/CHAPTER-10.md)
+
+
+### Things to look at
+- https://github.com/blomqma/next-rest-framework
+- https://www.kirandev.com/nextjs-api-routes-zod-validation

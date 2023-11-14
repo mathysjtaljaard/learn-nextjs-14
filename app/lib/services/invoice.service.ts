@@ -2,7 +2,7 @@ import { BaseService } from "./base.service";
 import Invoice, { CreateInvoice, UpdateInvoice } from "../models/invoice.model";
 const { v4: uuidv4 } = require("uuid");
 
-export class InvoiceService extends BaseService {
+class InvoiceService extends BaseService {
   async getAll() {
     await this._getConnection();
     return await Invoice.find();
@@ -32,3 +32,6 @@ export class InvoiceService extends BaseService {
     await Invoice.deleteMany({});
   }
 }
+
+const invoiceService = new InvoiceService();
+export { invoiceService };

@@ -4,16 +4,11 @@ const {
   revenue,
   users,
 } = require("../app/lib/placeholder-data-mongo.js");
-import { UserService } from "../app/lib/services/user.service";
-import { CustomerService } from "../app/lib/services/customer.service";
-import { RevenueService } from "../app/lib/services/revenue.service";
-import { InvoiceService } from "../app/lib/services/invoice.service";
+import { userService } from "../app/lib/services/user.service";
+import { customerService } from "../app/lib/services/customer.service";
+import { revenueService} from "../app/lib/services/revenue.service";
+import { invoiceService } from "../app/lib/services/invoice.service";
 import { exit } from "process";
-
-const userService = new UserService();
-const customerService = new CustomerService();
-const revenueService = new RevenueService();
-const invoiceService = new InvoiceService();
 
 const bcrypt = require("bcrypt");
 

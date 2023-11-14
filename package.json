@@ -4,7 +4,8 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
-    "apply-schema-updates": "prisma db push"
+    "apply-schema-updates": "prisma db push",
+    "seed-mongo": "ts-node -r dotenv/config ./scripts/seed-mongodb.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",

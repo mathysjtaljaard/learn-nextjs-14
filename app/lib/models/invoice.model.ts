@@ -1,8 +1,6 @@
-import mongoose, { mongo } from "mongoose";
-const isEmail = require("validator/lib/isEmail");
-const isUrl = require("validator/lib/isURL");
+import mongoose, { Schema, Types } from "mongoose";
 
-type BaseInvoice = {
+export type BaseInvoice = {
   customer_id: string;
   amount: number;
   date: string;
@@ -19,6 +17,7 @@ interface IInvoice extends mongoose.Document {
   customer_id: string;
   date: Date;
   amount: number;
+  // customer: Types.ObjectId; TODO: how to use subdocuments
   status: "pending" | "paid";
 }
 
@@ -32,6 +31,10 @@ const InvoiceSchema = new mongoose.Schema<IInvoice>(
       type: String,
       required: true,
     },
+    // customer: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'Customer'
+    // },
     date: { type: Date, required: true },
     amount: { type: Number, required: true },
     status: {

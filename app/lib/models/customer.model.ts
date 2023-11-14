@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
-const isEmail = require("validator/lib/isEmail");
-const isUrl = require("validator/lib/isURL");
+import mongoose, { Schema, Types } from "mongoose";
 
-type BaseCustomer = {
+const isEmail = require("validator/lib/isEmail");
+
+export type BaseCustomer = {
   name: string;
   email: string;
   image_url: string;
@@ -18,6 +18,7 @@ interface ICustomers extends mongoose.Document {
   name: string;
   email: string;
   image_url: string;
+  // invoices: Types.ObjectId; TODO: How to use subdocuments
 }
 
 const CustomerSchema = new mongoose.Schema<ICustomers>(
@@ -39,6 +40,9 @@ const CustomerSchema = new mongoose.Schema<ICustomers>(
       type: String,
       required: true,
     },
+    // invoices: {
+    //   type: Schema.Types.ObjectId, ref: 'Invoice'
+    // }
   },
   { timestamps: true }
 );
