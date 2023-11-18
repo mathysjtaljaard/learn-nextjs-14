@@ -68,7 +68,6 @@ async function seedRevenue() {
 
 async function seedData() {
   if (process.env.TRUNCATE) {
-    console.log("truncating data");
     await userService.deleteAll();
     await customerService.deleteAll();
     await invoiceService.deleteAll();

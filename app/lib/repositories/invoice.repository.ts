@@ -16,7 +16,6 @@ export class InvoiceRepository extends AbstractRepository {
       ...(limit && { limit }),
       ...(sortDefinition && { sort: sortDefinition }),
     };
-    console.log({ queryOptions });
     return await Invoice.find(query, null, queryOptions);
   }
 

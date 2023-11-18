@@ -1,10 +1,10 @@
 {
   "private": true,
+  "notes:": "apply-schema-updates: prisma db push",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
-    "apply-schema-updates": "prisma db push",
     "seed-mongo": "ts-node -r dotenv/config ./scripts/seed-mongodb.js"
   },
   "dependencies": {
