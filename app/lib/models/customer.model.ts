@@ -12,6 +12,7 @@ export type CreateCustomer = BaseCustomer;
 export type UpdateCustomer = BaseCustomer & {
   id: string;
 };
+export type Customer = UpdateCustomer;
 
 interface ICustomers extends mongoose.Document {
   id: string;

@@ -1,39 +1,20 @@
-import { BaseService } from "./base.service";
-import Customer, {
-  CreateCustomer,
-  UpdateCustomer,
-} from "../models/customer.model";
-const { v4: uuidv4 } = require("uuid");
+import { CustomerRepository } from "../repositories/customer.repository";
 
-class CustomerService extends BaseService {
-  async getAll() {
-    await this._getConnection();
-    return await Customer.find();
+export class CustomerService {
+  private customerRepository;
+
+  constructor(customerRepository: CustomerRepository) {
+    this.customerRepository = customerRepository;
   }
 
-  async getById(id: string) {
-    await this._getConnection();
-    return await Customer.find({ id }).populate("invoices");
+  async findCustomerById(id: string) {
+    return await this.customerRepository.getById(id);
   }
 
-  async create(customer: CreateCustomer) {
-    await this._getConnection();
-    return await Customer.create({ ...customer, id: uuidv4() });
-  }
-  async update(customer: UpdateCustomer) {
-    await this._getConnection();
-    return Customer.updateOne({ id: customer.id }, customer);
-  }
-
-  async deleteById(id: string) {
-    await this._getConnection();
-    return Customer.deleteOne({ id });
-  }
-  async deleteAll() {
-    await this._getConnection();
-    await Customer.deleteMany({});
+  async getTotalCustomerCount() {
+    return await this.customerRepository.totalCount();
   }
 }
 
-const customerService = new CustomerService();
+const customerService = new CustomerService(new CustomerRepository());
 export { customerService };

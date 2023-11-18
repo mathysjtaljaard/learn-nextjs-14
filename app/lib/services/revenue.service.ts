@@ -1,37 +1,16 @@
-import Revenue, { logRevenue, updateRevenue } from "../models/revenue.model";
-const { v4: uuidv4 } = require("uuid");
-import { BaseService } from "./base.service";
+import { RevenueRepository } from "../repositories/revenue.repository";
 
-class RevenueService extends BaseService {
-  async getAll() {
-    await this._getConnection();
-    return await Revenue.find();
+class RevenueService {
+
+  private revenueRepository;
+  constructor(revenueRepository: RevenueRepository){
+    this.revenueRepository = revenueRepository
   }
 
-  async getById(id: string) {
-    await this._getConnection();
-    return await Revenue.findById(id);
-  }
-
-  async create(user: logRevenue) {
-    await this._getConnection();
-    return await Revenue.create({ ...user, id: uuidv4() });
-  }
-
-  async update(user: updateRevenue) {
-    await this._getConnection();
-    return await Revenue.updateOne({ id: user.id }, user);
-  }
-
-  async deleteById(id: string) {
-    await this._getConnection();
-    await Revenue.deleteOne({ id });
-  }
-  async deleteAll() {
-    await this._getConnection();
-    await Revenue.deleteMany({});
+  async findAllRevenue() {
+    return await this.revenueRepository.getAll()
   }
 }
 
-const revenueService = new RevenueService();
+const revenueService = new RevenueService(new RevenueRepository());
 export { revenueService };

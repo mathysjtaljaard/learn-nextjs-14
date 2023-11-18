@@ -1,37 +1,72 @@
-import { BaseService } from "./base.service";
-import Invoice, { CreateInvoice, UpdateInvoice } from "../models/invoice.model";
-const { v4: uuidv4 } = require("uuid");
+import { InvoiceRepository } from "../repositories/invoice.repository";
+import { CustomerService, customerService } from "./customer.service";
 
-class InvoiceService extends BaseService {
-  async getAll() {
-    await this._getConnection();
-    return await Invoice.find();
+export enum SORT_ORDER {
+  ASC = "asc",
+  DESC = "desc",
+}
+
+export enum INVOICE_STATUS {
+  PAID = "paid",
+  PENDING = "pending",
+}
+class InvoiceService {
+  private invoiceRepository;
+  private customerService;
+  constructor(
+    invoiceRepository: InvoiceRepository,
+    customerService: CustomerService
+  ) {
+    this.invoiceRepository = invoiceRepository;
+    this.customerService = customerService;
   }
 
-  async getById(id: string) {
-    await this._getConnection();
-    return await Invoice.findById({ id });
+  async findAllInvoices() {
+    return await this.invoiceRepository.getAll();
   }
 
-  async create(invoice: CreateInvoice) {
-    await this._getConnection();
-    return await Invoice.create({ ...invoice, id: uuidv4() });
+  async getTotalInvoiceCount() {
+    return await this.invoiceRepository.totalCount();
   }
 
-  async update(invoice: UpdateInvoice) {
-    await this._getConnection();
-    return await Invoice.updateOne({ id: invoice.id }, invoice);
+  async getTotalInvoiceCountsGroupedBy(
+    groupByFieldId: string,
+    countField?: string
+  ) {
+    const results = await this.invoiceRepository.countGroupBy(
+      groupByFieldId,
+      countField
+    );
+    return results.reduce((prev, current) => Object.assign({[prev._id]: prev.totalAmount}, {[current._id]: current.totalAmount}))
   }
 
-  async deleteById(id: string) {
-    await this._getConnection();
-    return await Invoice.deleteOne({ id });
-  }
-  async deleteAll() {
-    await this._getConnection();
-    await Invoice.deleteMany({});
+  async findInvoices(
+    sort: { [field: string]: SORT_ORDER.ASC | SORT_ORDER.DESC },
+    limit?: number
+  ) {
+    const invoices = await this.invoiceRepository.getSortedLimit(
+      {},
+      sort,
+      limit
+    );
+    return await Promise.all(
+      invoices?.map(async ({ id, amount, customer_id }) => {
+        const { image_url, name, email } =
+          (await this.customerService.findCustomerById(customer_id)) || {};
+        return {
+          id,
+          image_url,
+          name,
+          email,
+          amount,
+        };
+      })
+    );
   }
 }
 
-const invoiceService = new InvoiceService();
+const invoiceService = new InvoiceService(
+  new InvoiceRepository(),
+  customerService
+);
 export { invoiceService };
