@@ -4,7 +4,10 @@ const { v4: uuidv4 } = require("uuid");
 
 export class UserRepository extends AbstractRepository {
   async totalCount(match: any) {
-    return await User.countDocuments(match)    
+    return await User.countDocuments(match);
+  }
+  async findByQuery(query: any) {
+    return await User.find(query);
   }
 
   async getAll() {

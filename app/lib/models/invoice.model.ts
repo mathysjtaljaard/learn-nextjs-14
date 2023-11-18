@@ -1,4 +1,5 @@
-import mongoose, { Schema, Types } from "mongoose";
+import mongoose from "mongoose";
+import { Customer, CustomerSchema } from "./customer.model";
 
 export type BaseInvoice = {
   customer_id: string;
@@ -11,6 +12,7 @@ export type CreateInvoice = BaseInvoice;
 export type UpdateInvoice = BaseInvoice & {
   id: string;
 };
+export type Invoice = UpdateInvoice;
 
 interface IInvoice extends mongoose.Document {
   id: string;
@@ -19,9 +21,10 @@ interface IInvoice extends mongoose.Document {
   amount: number;
   // customer: Types.ObjectId; TODO: how to use subdocuments
   status: "pending" | "paid";
+  // customer: Customer
 }
 
-const InvoiceSchema = new mongoose.Schema<IInvoice>(
+export const InvoiceSchema = new mongoose.Schema<IInvoice>(
   {
     id: {
       type: String,
@@ -31,10 +34,7 @@ const InvoiceSchema = new mongoose.Schema<IInvoice>(
       type: String,
       required: true,
     },
-    // customer: {
-    //   type: Schema.Types.ObjectId,
-    //   ref: 'Customer'
-    // },
+    // customer: CustomerSchema,
     date: { type: Date, required: true },
     amount: { type: Number, required: true },
     status: {

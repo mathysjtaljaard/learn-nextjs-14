@@ -12,5 +12,5 @@ export abstract class AbstractRepository {
   abstract deleteById(id: string): void;
   abstract deleteAll(): void;
   abstract totalCount(match?: any): any;
-  
+  abstract findByQuery(query: any): any;
 }

@@ -20,6 +20,10 @@ export class CustomerRepository extends AbstractRepository {
     return result[0];
   }
 
+  async findByQuery(query: any) {
+    return await Customer.find(query)
+  }
+
   async create(customer: CreateCustomer) {
     return await Customer.create({ ...customer, id: uuidv4() });
   }

@@ -14,6 +14,19 @@ export class CustomerService {
   async getTotalCustomerCount() {
     return await this.customerRepository.totalCount();
   }
+
+  async findCustomersByTerm(term: string) {
+    return await this.customerRepository.findByQuery({
+      $or: [
+        {
+          name: new RegExp(term),
+        },
+        {
+          email: new RegExp(term),
+        },
+      ],
+    });
+  }
 }
 
 const customerService = new CustomerService(new CustomerRepository());

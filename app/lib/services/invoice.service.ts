@@ -1,6 +1,6 @@
 import { InvoiceRepository } from "../repositories/invoice.repository";
 import { CustomerService, customerService } from "./customer.service";
-
+import { chain, uniqWith } from 'lodash';
 export enum SORT_ORDER {
   ASC = "asc",
   DESC = "desc",
@@ -29,6 +29,17 @@ class InvoiceService {
     return await this.invoiceRepository.totalCount();
   }
 
+  async findInvoicesByTerm(term: string) {
+    const orClause: any = [{ status: new RegExp(term) }];
+    console.log(orClause);
+    const queryTerm = {
+      $or: orClause,
+    };
+
+    const matchedInvoices = await this.invoiceRepository.findByQuery(queryTerm)
+    console.log(matchedInvoices)
+  }
+
   async getTotalInvoiceCountsGroupedBy(
     groupByFieldId: string,
     countField?: string
@@ -37,7 +48,12 @@ class InvoiceService {
       groupByFieldId,
       countField
     );
-    return results.reduce((prev, current) => Object.assign({[prev._id]: prev.totalAmount}, {[current._id]: current.totalAmount}))
+    return results.reduce((prev, current) =>
+      Object.assign(
+        { [prev._id]: prev.totalAmount },
+        { [current._id]: current.totalAmount }
+      )
+    );
   }
 
   async findInvoices(

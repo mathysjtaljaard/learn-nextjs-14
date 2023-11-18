@@ -1,5 +1,5 @@
-import mongoose, { Schema, Types } from "mongoose";
-
+import mongoose from "mongoose";
+import { Invoice, InvoiceSchema } from "./invoice.model";
 const isEmail = require("validator/lib/isEmail");
 
 export type BaseCustomer = {
@@ -19,10 +19,10 @@ interface ICustomers extends mongoose.Document {
   name: string;
   email: string;
   image_url: string;
-  // invoices: Types.ObjectId; TODO: How to use subdocuments
+  // invoices: Array<Invoice>
 }
 
-const CustomerSchema = new mongoose.Schema<ICustomers>(
+export const CustomerSchema = new mongoose.Schema<ICustomers>(
   {
     id: {
       type: String,
@@ -41,9 +41,7 @@ const CustomerSchema = new mongoose.Schema<ICustomers>(
       type: String,
       required: true,
     },
-    // invoices: {
-    //   type: Schema.Types.ObjectId, ref: 'Invoice'
-    // }
+    // invoices: [InvoiceSchema]
   },
   { timestamps: true }
 );

@@ -3,6 +3,11 @@ import { AbstractRepository } from "./abstract.repository";
 const { v4: uuidv4 } = require("uuid");
 
 export class RevenueRepository extends AbstractRepository {
+
+  async findByQuery(query: any) {
+      return await Revenue.find(query);
+  }
+  
   async totalCount(match: any) {
     return await Revenue.countDocuments(match)
   }
