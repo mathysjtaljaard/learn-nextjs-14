@@ -35,19 +35,50 @@ class InvoiceService {
   }
 
   async findByTerm(term: string) {
-    let orClause: any = [{ status: new RegExp(term) }];
+    const regexTerm = new RegExp(term, 'ig');
+    console.log(regexTerm)
+    let orClause: any = [
+      { status: regexTerm },
+      {
+        $expr: {
+          $function: {
+            body: `function body(amount, regexTerm) {
+              return amount.toString().match(regexTerm);
+            }`,
+            args: ["$amount", regexTerm],
+            lang: "js",
+          },
+        },
+      },
+      {
+        $expr: {
+          $function: {
+            body: `function body(date, regexTerm) {
+              return new Date(date).toUTCString().match(regexTerm);
+            }`,
+            args: ["$date", regexTerm],
+            lang: "js",
+          },
+        },
+      },
+    ];
 
-    const matchedCustomers = await this.customerService.findByTerm(term)
+    const matchedCustomers = await this.customerService.findByTerm(term);
     if (matchedCustomers?.length > 0) {
-      const result = flatten(matchedCustomers.map(({invoices}) => invoices.map((value: { _id: any; }) => value._id)))
+      const result = flatten(
+        matchedCustomers.map(({ invoices }) =>
+          invoices.map((value: { _id: any }) => value._id)
+        )
+      );
       if (result.length > 0) {
-        orClause.push({ _id: { $in: result } })
+        orClause.push({ _id: { $in: result } });
       }
     }
+
     let queryTerm: any = {
       $or: orClause,
     };
-    const matchedInvoices = await this.repository.findByQuery(queryTerm)
+    const matchedInvoices = await this.repository.findByQuery(queryTerm);
     return matchedInvoices;
   }
 
