@@ -88,7 +88,7 @@ export async function fetchFilteredInvoices(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const invoices = await invoiceService.findByTerm(query)
+    const invoices = await invoiceService.findByTerm(query, ITEMS_PER_PAGE)
     return invoices.map( ({id, amount, status, date, customer}) => {
       const {name, image_url, email} = customer
       return {

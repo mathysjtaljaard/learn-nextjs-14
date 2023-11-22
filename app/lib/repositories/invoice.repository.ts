@@ -19,8 +19,11 @@ export class InvoiceRepository extends AbstractRepository {
     return await Invoice.find(query, null, queryOptions).populate('customer');
   }
 
-  async findByQuery(query: any) {
-    return await Invoice.find(query).populate('customer');
+  async findByQuery(query: any, limit?: number) {
+    const queryOptions = {
+      ...(limit && { limit }),
+    }
+    return await Invoice.find(query, null, queryOptions).populate('customer');
   }
 
   async totalCount(match?: any) {

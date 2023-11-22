@@ -76,10 +76,9 @@ class InvoiceService {
     }
 
     let queryTerm: any = {
-      $or: orClause,
-      ...(limit && { limit }),
+      $or: orClause
     };
-    const matchedInvoices = await this.repository.findByQuery(queryTerm);
+    const matchedInvoices = await this.repository.findByQuery(queryTerm, limit);
     return matchedInvoices;
   }
 
