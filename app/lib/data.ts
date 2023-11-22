@@ -16,14 +16,7 @@ import { unstable_noStore as noStore } from 'next/cache';
 
 export async function fetchRevenue() {
   noStore();
-  // Add noStore() here prevent the response from being cached.
-  // This is equivalent to in fetch(..., {cache: 'no-store'}).
-  
   try {
-    // Artificially delay a reponse for demo purposes.
-    // Don't do this in real life :)
-
-    console.log('Fetching revenue data...');
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const revenue = await revenueService.findAllRevenue();
@@ -38,7 +31,7 @@ export async function fetchRevenue() {
 export async function fetchLatestInvoices() {
   noStore();
   try {
-   const invoices = await invoiceService.findInvoices({date: SORT_ORDER.DESC}, 5)
+   const invoices = await invoiceService.find({date: SORT_ORDER.DESC}, 5)
     const latestInvoices = invoices.map((invoice: any) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
@@ -57,9 +50,9 @@ export async function fetchCardData() {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = invoiceService.getTotalInvoiceCount();
-    const customerCountPromise = customerService.getTotalCustomerCount();
-    const invoiceStatusPromise = invoiceService.getTotalInvoiceCountsGroupedBy('status', 'amount')
+    const invoiceCountPromise = invoiceService.getTotalCount();
+    const customerCountPromise = customerService.getTotalCount();
+    const invoiceStatusPromise = invoiceService.getTotalCountsGroupedBy('status', 'amount')
 
     const [invoiceCount, customerCount, {pending, paid}] = await Promise.all([
       invoiceCountPromise,
@@ -95,29 +88,13 @@ export async function fetchFilteredInvoices(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    // const invoices = await sql<InvoicesTable>`
-    //   SELECT
-    //     invoices.id,
-    //     invoices.amount,
-    //     invoices.date,
-    //     invoices.status,
-    //     customers.name,
-    //     customers.email,
-    //     customers.image_url
-    //   FROM invoices
-    //   JOIN customers ON invoices.customer_id = customers.id
-    //   WHERE
-    //     customers.name ILIKE ${`%${query}%`} OR
-    //     customers.email ILIKE ${`%${query}%`} OR
-    //     invoices.amount::text ILIKE ${`%${query}%`} OR
-    //     invoices.date::text ILIKE ${`%${query}%`} OR
-    //     invoices.status ILIKE ${`%${query}%`}
-    //   ORDER BY invoices.date DESC
-    //   LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    // `;
-    invoiceService.findInvoicesByTerm(query)
-
-    // return invoices.rows;
+    const invoices = await invoiceService.findByTerm(query)
+    return invoices.map( ({id, amount, status, date, customer}) => {
+      const {name, image_url, email} = customer
+      return {
+        id, name, email, status, amount, date, image_url
+      }
+    })
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoices.');

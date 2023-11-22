@@ -1,4 +1,4 @@
-import User, { CreateUser, UpdateUser } from "../models/user.model";
+import User, { AUser } from "../models/user.model";
 import { AbstractRepository } from "./abstract.repository";
 const { v4: uuidv4 } = require("uuid");
 
@@ -18,11 +18,11 @@ export class UserRepository extends AbstractRepository {
     return await User.findById(id);
   }
 
-  async create(user: CreateUser) {
+  async create(user: AUser) {
     return await User.create({ ...user, id: uuidv4() });
   }
 
-  async update(user: UpdateUser) {
+  async update(user: AUser) {
     return await User.updateOne({ id: user.id }, user);
   }
 

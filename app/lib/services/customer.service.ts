@@ -1,22 +1,30 @@
+import { ACustomer } from "../models/customer.model";
 import { CustomerRepository } from "../repositories/customer.repository";
 
 export class CustomerService {
-  private customerRepository;
+  private repository;
 
-  constructor(customerRepository: CustomerRepository) {
-    this.customerRepository = customerRepository;
+  constructor(repository: CustomerRepository) {
+    this.repository = repository;
   }
 
-  async findCustomerById(id: string) {
-    return await this.customerRepository.getById(id);
+  async createOrUpdate(customer: ACustomer) {
+    if (customer?.id) {
+      return await this.repository.update(customer);
+    }
+    return await this.repository.create(customer);
   }
 
-  async getTotalCustomerCount() {
-    return await this.customerRepository.totalCount();
+  async findById(id: string) {
+    return await this.repository.getById(id);
   }
 
-  async findCustomersByTerm(term: string) {
-    return await this.customerRepository.findByQuery({
+  async getTotalCount() {
+    return await this.repository.totalCount();
+  }
+
+  async findByTerm(term: string) {
+    return await this.repository.findByQuery({
       $or: [
         {
           name: new RegExp(term),
@@ -26,6 +34,10 @@ export class CustomerService {
         },
       ],
     });
+  }
+
+  async deleteAll() {
+    await this.repository.deleteAll();
   }
 }
 

@@ -1,10 +1,10 @@
-import Invoice, { CreateInvoice, UpdateInvoice } from "../models/invoice.model";
+import Invoice, { AInvoice } from "../models/invoice.model";
 import { AbstractRepository } from "./abstract.repository";
 const { v4: uuidv4 } = require("uuid");
 
 export class InvoiceRepository extends AbstractRepository {
   async getAll() {
-    return await Invoice.find();
+    return await Invoice.find().populate('customer');
   }
 
   async getSortedLimit(
@@ -16,11 +16,11 @@ export class InvoiceRepository extends AbstractRepository {
       ...(limit && { limit }),
       ...(sortDefinition && { sort: sortDefinition }),
     };
-    return await Invoice.find(query, null, queryOptions);
+    return await Invoice.find(query, null, queryOptions).populate('customer');
   }
 
   async findByQuery(query: any) {
-    return await Invoice.find(query);
+    return await Invoice.find(query).populate('customer');
   }
 
   async totalCount(match?: any) {
@@ -38,14 +38,14 @@ export class InvoiceRepository extends AbstractRepository {
     ]);
   }
   async getById(id: string) {
-    return await Invoice.findById({ id });
+    return await Invoice.findById({ id }).populate('customer');
   }
 
-  async create(invoice: CreateInvoice) {
+  async create(invoice: AInvoice) {
     return await Invoice.create({ ...invoice, id: uuidv4() });
   }
 
-  async update(invoice: UpdateInvoice) {
+  async update(invoice: AInvoice) {
     return await Invoice.updateOne({ id: invoice.id }, invoice);
   }
 

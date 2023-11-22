@@ -9,6 +9,7 @@ import { customerService } from "../app/lib/services/customer.service";
 import { revenueService} from "../app/lib/services/revenue.service";
 import { invoiceService } from "../app/lib/services/invoice.service";
 import { exit } from "process";
+import dbConnect from "../app/lib/connectors/mongodb/mongoose-connector";
 
 const bcrypt = require("bcrypt");
 
@@ -17,7 +18,7 @@ async function seedUsers() {
     return await Promise.all(
       users.map(async (user) => {
         const hashedPassword = await bcrypt.hash(user.password, 10);
-        return await userService.create({
+        return await userService.createOrUpdate({
           ...user,
           password: hashedPassword,
         });
@@ -33,7 +34,7 @@ async function seedCustomers() {
   try {
     return await Promise.all(
       customers.map(
-        async (customer) => await customerService.create(customer)
+        async (customer) => await customerService.createOrUpdate(customer)
       )
     );
   } catch (error) {
@@ -46,7 +47,12 @@ async function seedInvoices(createdCustomers) {
   try {
     return await Promise.all(
       getInvoices(createdCustomers).map(
-        async (invoice) => await invoiceService.create(invoice)
+        async (invoice) => {
+          const newInvoice = await invoiceService.createOrUpdate(invoice)
+          const customer = await customerService.findById(invoice.customer_id)
+          customer.invoices.push(newInvoice._id)
+          await customer.save()
+        }
       )
     );
   } catch (error) {
@@ -58,7 +64,7 @@ async function seedInvoices(createdCustomers) {
 async function seedRevenue() {
   try {
     return await Promise.all(
-      revenue.map(async (rev) => await revenueService.create(rev))
+      revenue.map(async (rev) => await revenueService.createOrUpdate(rev))
     );
   } catch (error) {
     console.error("Error seeding revenue:", error);
@@ -67,6 +73,7 @@ async function seedRevenue() {
 }
 
 async function seedData() {
+  await dbConnect()
   if (process.env.TRUNCATE) {
     await userService.deleteAll();
     await customerService.deleteAll();
@@ -74,10 +81,9 @@ async function seedData() {
     await revenueService.deleteAll();
   }
 
-  const users = await seedUsers();
-  const createdCustomers = await seedCustomers();
-  const invoices = await seedInvoices(createdCustomers);
-  const revenue = await seedRevenue();
+  await seedUsers();
+  await seedInvoices(await seedCustomers());
+  await seedRevenue();
 
   exit(0);
 }

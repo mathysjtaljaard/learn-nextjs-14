@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 const isEmail = require("validator/lib/isEmail");
 
-type BaseRevenue = {
+export type ARevenue = {
+  id?: string;
   month: string;
   revenue: number;
 };
 
-export type logRevenue = BaseRevenue;
-export type updateRevenue = BaseRevenue & { id: string };
 
 interface IRevenue extends mongoose.Document {
   id: string;

@@ -1,4 +1,4 @@
-import Revenue, { logRevenue, updateRevenue } from "../models/revenue.model";
+import Revenue, { ARevenue } from "../models/revenue.model";
 import { AbstractRepository } from "./abstract.repository";
 const { v4: uuidv4 } = require("uuid");
 
@@ -19,11 +19,11 @@ export class RevenueRepository extends AbstractRepository {
     return await Revenue.findById(id);
   }
 
-  async create(user: logRevenue) {
+  async create(user: ARevenue) {
     return await Revenue.create({ ...user, id: uuidv4() });
   }
 
-  async update(user: updateRevenue) {
+  async update(user: ARevenue) {
     return await Revenue.updateOne({ id: user.id }, user);
   }
 

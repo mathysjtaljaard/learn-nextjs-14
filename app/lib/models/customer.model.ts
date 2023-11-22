@@ -1,25 +1,19 @@
-import mongoose from "mongoose";
-import { Invoice, InvoiceSchema } from "./invoice.model";
+import mongoose, { ObjectId, Types } from "mongoose";
 const isEmail = require("validator/lib/isEmail");
 
-export type BaseCustomer = {
+export type ACustomer = {
+  id?: string;
   name: string;
   email: string;
   image_url: string;
 };
-
-export type CreateCustomer = BaseCustomer;
-export type UpdateCustomer = BaseCustomer & {
-  id: string;
-};
-export type Customer = UpdateCustomer;
 
 interface ICustomers extends mongoose.Document {
   id: string;
   name: string;
   email: string;
   image_url: string;
-  // invoices: Array<Invoice>
+  invoices: Array<ObjectId>
 }
 
 export const CustomerSchema = new mongoose.Schema<ICustomers>(
@@ -41,7 +35,10 @@ export const CustomerSchema = new mongoose.Schema<ICustomers>(
       type: String,
       required: true,
     },
-    // invoices: [InvoiceSchema]
+    invoices: [{
+      type: Types.ObjectId,
+      ref: 'Invoice'
+    }]
   },
   { timestamps: true }
 );

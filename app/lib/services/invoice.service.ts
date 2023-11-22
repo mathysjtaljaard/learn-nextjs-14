@@ -1,6 +1,7 @@
+import { flatten } from "lodash";
+import { AInvoice } from "../models/invoice.model";
 import { InvoiceRepository } from "../repositories/invoice.repository";
 import { CustomerService, customerService } from "./customer.service";
-import { chain, uniqWith } from 'lodash';
 export enum SORT_ORDER {
   ASC = "asc",
   DESC = "desc",
@@ -11,40 +12,47 @@ export enum INVOICE_STATUS {
   PENDING = "pending",
 }
 class InvoiceService {
-  private invoiceRepository;
+  private repository;
   private customerService;
-  constructor(
-    invoiceRepository: InvoiceRepository,
-    customerService: CustomerService
-  ) {
-    this.invoiceRepository = invoiceRepository;
+  constructor(repository: InvoiceRepository, customerService: CustomerService) {
+    this.repository = repository;
     this.customerService = customerService;
   }
 
-  async findAllInvoices() {
-    return await this.invoiceRepository.getAll();
+  async createOrUpdate(invoice: AInvoice) {
+    if (invoice?.id) {
+      return await this.repository.update(invoice);
+    }
+    return await this.repository.create(invoice);
   }
 
-  async getTotalInvoiceCount() {
-    return await this.invoiceRepository.totalCount();
+  async findAll() {
+    return await this.repository.getAll();
   }
 
-  async findInvoicesByTerm(term: string) {
-    const orClause: any = [{ status: new RegExp(term) }];
-    console.log(orClause);
-    const queryTerm = {
+  async getTotalCount() {
+    return await this.repository.totalCount();
+  }
+
+  async findByTerm(term: string) {
+    let orClause: any = [{ status: new RegExp(term) }];
+
+    const matchedCustomers = await this.customerService.findByTerm(term)
+    if (matchedCustomers?.length > 0) {
+      const result = flatten(matchedCustomers.map(({invoices}) => invoices.map((value: { _id: any; }) => value._id)))
+      if (result.length > 0) {
+        orClause.push({ _id: { $in: result } })
+      }
+    }
+    let queryTerm: any = {
       $or: orClause,
     };
-
-    const matchedInvoices = await this.invoiceRepository.findByQuery(queryTerm)
-    console.log(matchedInvoices)
+    const matchedInvoices = await this.repository.findByQuery(queryTerm)
+    return matchedInvoices;
   }
 
-  async getTotalInvoiceCountsGroupedBy(
-    groupByFieldId: string,
-    countField?: string
-  ) {
-    const results = await this.invoiceRepository.countGroupBy(
+  async getTotalCountsGroupedBy(groupByFieldId: string, countField?: string) {
+    const results = await this.repository.countGroupBy(
       groupByFieldId,
       countField
     );
@@ -56,28 +64,25 @@ class InvoiceService {
     );
   }
 
-  async findInvoices(
+  async find(
     sort: { [field: string]: SORT_ORDER.ASC | SORT_ORDER.DESC },
     limit?: number
   ) {
-    const invoices = await this.invoiceRepository.getSortedLimit(
-      {},
-      sort,
-      limit
-    );
-    return await Promise.all(
-      invoices?.map(async ({ id, amount, customer_id }) => {
-        const { image_url, name, email } =
-          (await this.customerService.findCustomerById(customer_id)) || {};
-        return {
-          id,
-          image_url,
-          name,
-          email,
-          amount,
-        };
-      })
-    );
+    const invoices = await this.repository.getSortedLimit({}, sort, limit);
+    return invoices.map(({ id, amount, customer }) => {
+      const { name, email, image_url } = customer;
+      return {
+        id,
+        image_url,
+        name,
+        email,
+        amount,
+      };
+    });
+  }
+
+  async deleteAll() {
+    await this.repository.deleteAll();
   }
 }
 
@@ -85,4 +90,5 @@ const invoiceService = new InvoiceService(
   new InvoiceRepository(),
   customerService
 );
+
 export { invoiceService };

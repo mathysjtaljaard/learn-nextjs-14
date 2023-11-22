@@ -1,14 +1,12 @@
 import mongoose from "mongoose";
 const isEmail = require("validator/lib/isEmail");
 
-type BaseUser = {
+export type AUser = {
+  id?: string;
   name: string;
   email: string;
   password: string;
 };
-
-export type CreateUser = BaseUser;
-export type UpdateUser = { id: string } & BaseUser;
 
 interface IUsers extends mongoose.Document {
   id: string;
