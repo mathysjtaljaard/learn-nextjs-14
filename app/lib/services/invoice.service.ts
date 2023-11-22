@@ -34,7 +34,7 @@ class InvoiceService {
     return await this.repository.totalCount();
   }
 
-  async findByTerm(term: string, limit: number) {
+  async findByTerm(term: string, limit?: number, offset?: number) {
     const regexTerm = new RegExp(term, 'ig');
     console.log(regexTerm)
     let orClause: any = [
@@ -78,7 +78,7 @@ class InvoiceService {
     let queryTerm: any = {
       $or: orClause
     };
-    const matchedInvoices = await this.repository.findByQuery(queryTerm, limit);
+    const matchedInvoices = await this.repository.findByQuery(queryTerm, limit, offset);
     return matchedInvoices;
   }
 

@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 
 export class InvoiceRepository extends AbstractRepository {
   async getAll() {
-    return await Invoice.find().populate('customer');
+    return await Invoice.find().populate("customer");
   }
 
   async getSortedLimit(
@@ -16,14 +16,15 @@ export class InvoiceRepository extends AbstractRepository {
       ...(limit && { limit }),
       ...(sortDefinition && { sort: sortDefinition }),
     };
-    return await Invoice.find(query, null, queryOptions).populate('customer');
+    return await Invoice.find(query, null, queryOptions).populate("customer");
   }
 
-  async findByQuery(query: any, limit?: number) {
+  async findByQuery(query: any, limit?: number, offset?: number) {
     const queryOptions = {
       ...(limit && { limit }),
-    }
-    return await Invoice.find(query, null, queryOptions).populate('customer');
+      ...(offset && { skip: offset }),
+    };
+    return await Invoice.find(query, null, queryOptions).populate("customer");
   }
 
   async totalCount(match?: any) {
@@ -41,7 +42,7 @@ export class InvoiceRepository extends AbstractRepository {
     ]);
   }
   async getById(id: string) {
-    return await Invoice.findById({ id }).populate('customer');
+    return await Invoice.findById({ id }).populate("customer");
   }
 
   async create(invoice: AInvoice) {

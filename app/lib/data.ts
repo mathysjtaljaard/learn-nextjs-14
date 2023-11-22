@@ -1,13 +1,3 @@
-// import { sql } from '@vercel/postgres';
-import {
-  CustomerField,
-  CustomersTable,
-  InvoiceForm,
-  InvoicesTable,
-  LatestInvoiceRaw,
-  User,
-  Revenue,
-} from './definitions';
 import { formatCurrency } from './utils';
 import { revenueService } from './services/revenue.service';
 import { SORT_ORDER, invoiceService } from './services/invoice.service';
@@ -88,7 +78,7 @@ export async function fetchFilteredInvoices(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const invoices = await invoiceService.findByTerm(query, ITEMS_PER_PAGE)
+    const invoices = await invoiceService.findByTerm(query, ITEMS_PER_PAGE, offset)
     return invoices.map( ({id, amount, status, date, customer}) => {
       const {name, image_url, email} = customer
       return {
@@ -101,27 +91,17 @@ export async function fetchFilteredInvoices(
   }
 }
 
-// export async function fetchInvoicesPages(query: string) {
-  // noStore();
-//   try {
-//     const count = await sql`SELECT COUNT(*)
-//     FROM invoices
-//     JOIN customers ON invoices.customer_id = customers.id
-//     WHERE
-//       customers.name ILIKE ${`%${query}%`} OR
-//       customers.email ILIKE ${`%${query}%`} OR
-//       invoices.amount::text ILIKE ${`%${query}%`} OR
-//       invoices.date::text ILIKE ${`%${query}%`} OR
-//       invoices.status ILIKE ${`%${query}%`}
-//   `;
-
-//     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-//     return totalPages;
-//   } catch (error) {
-//     console.error('Database Error:', error);
-//     throw new Error('Failed to fetch total number of invoices.');
-//   }
-// }
+export async function fetchInvoicesPages(query: string) {
+  noStore();
+  try {
+    const invoices = await invoiceService.findByTerm(query)
+    const totalPages = Math.ceil(Number(invoices.length) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of invoices.');
+  }
+}
 
 // export async function fetchInvoiceById(id: string) {
   // noStore();
