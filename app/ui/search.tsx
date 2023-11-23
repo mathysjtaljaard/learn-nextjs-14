@@ -4,6 +4,13 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from 'use-debounce';
 
+// Given this is a client side component, we are able to use the 
+// react hooks such as use state, usePathname, useRouter, etc.
+// when the search component, which is composed in the app/dashboard/invoices/page.tsx 
+// is updated with the search params, a re-render of the invoice page table is triggered
+// The app/dashboard/invoices/page.tsx is receives a prop called searchParams which is used 
+// on the server side. this is passed into the app/ui/invoices/table.tsx component which 
+// performs the query to retrieve the data based on the search term
 export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
