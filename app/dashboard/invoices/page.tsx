@@ -22,8 +22,6 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const state = await (await init()).dbConnectionState
-  console.debug('Invoices Page - Database connection - ', state)
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page || 1);
   

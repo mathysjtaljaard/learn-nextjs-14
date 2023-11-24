@@ -4,6 +4,14 @@ import { SORT_ORDER, invoiceService } from "./services/invoice.service";
 import { customerService } from "./services/customer.service";
 import { unstable_noStore as noStore } from "next/cache";
 import { CustomerField } from "./definitions";
+import { init } from "../middleware";
+
+// TODO: does this look like a good candidate for a controller level or split these off into their corresponding services??
+async function establish() {
+  const state = (await init()).dbConnectionState;
+  console.log("db connection in data.ts", state);
+}
+establish();
 
 export async function fetchRevenue() {
   noStore();
@@ -126,14 +134,14 @@ export async function fetchInvoiceById(id: string): Promise<any> {
       status,
       amount,
       date,
-    } = await invoiceService.findById(id)
+    } = await invoiceService.findById(id);
 
     return {
       id: invoiceId,
       customer_id: customer?._id?.toString(),
       status,
       amount: amount / 100,
-      date
+      date,
     };
   } catch (error) {
     console.error("Database Error:", error);
