@@ -1,3 +1,4 @@
+import { Schema } from "mongoose";
 import { ACustomer } from "../models/customer.model";
 import { CustomerRepository } from "../repositories/customer.repository";
 
@@ -6,6 +7,14 @@ export class CustomerService {
 
   constructor(repository: CustomerRepository) {
     this.repository = repository;
+  }
+
+  async findAll(shouldPopulateInvoices = false, returnFields?: string) {
+    return await this.repository.getAll(shouldPopulateInvoices, {}, returnFields);
+  }
+
+  async findByObjectId(id: string) {
+    return await this.repository.getByObjectId(id)
   }
 
   async createOrUpdate(customer: ACustomer) {
@@ -24,13 +33,14 @@ export class CustomerService {
   }
 
   async findByTerm(term: string) {
+    const regex = new RegExp(term?.replace(/\s+/g, '.*'), 'gi')
     return await this.repository.findByQuery({
       $or: [
         {
-          name: new RegExp(term),
+          name: regex,
         },
         {
-          email: new RegExp(term),
+          email: regex,
         },
       ],
     });

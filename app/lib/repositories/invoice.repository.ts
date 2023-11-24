@@ -50,13 +50,13 @@ export class InvoiceRepository extends AbstractRepository {
   }
 
   async update(invoice: AInvoice) {
-    return await Invoice.updateOne({ id: invoice.id }, invoice);
+    return await Invoice.updateOne({ id: invoice.id }, invoice).exec();
   }
 
   async deleteById(id: string) {
-    return await Invoice.deleteOne({ id });
+    return await Invoice.deleteOne({ id }).exec();
   }
   async deleteAll() {
-    await Invoice.deleteMany({});
+    await Invoice.deleteMany({}).exec();
   }
 }

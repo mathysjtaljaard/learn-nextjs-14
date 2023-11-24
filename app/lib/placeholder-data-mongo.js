@@ -1,4 +1,7 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
+
+const { toDate } = require("date-fns");
+
 // https://nextjs.org/learn/dashboard-app/fetching-data
 const users = [
   {
@@ -61,111 +64,115 @@ const customers = [
   },
 ];
 
+const setUTCDate = (value) => {
+  return new Date(value).valueOf()
+}
+
 const getInvoices = (generatedCustomers) => [
   {
     customer_id: generatedCustomers[0].id,
     customer: generatedCustomers[0]._id,
     amount: 15795,
     status: "pending",
-    date: "2022-12-06",
+    date: setUTCDate("2022-12-06"),
   },
   {
     customer_id: generatedCustomers[1].id,
     customer: generatedCustomers[1]._id,
     amount: 20348,
     status: "pending",
-    date: "2022-11-14",
+    date: setUTCDate("2022-11-14"),
   },
   {
     customer_id: generatedCustomers[4].id,
     customer: generatedCustomers[4]._id,
     amount: 3040,
     status: "paid",
-    date: "2022-10-29",
+    date: setUTCDate("2022-10-29"),
   },
   {
     customer_id: generatedCustomers[3].id,
     customer: generatedCustomers[3]._id,
     amount: 44800,
     status: "paid",
-    date: "2023-09-10",
+    date: setUTCDate("2023-09-10"),
   },
   {
     customer_id: generatedCustomers[5].id,
     customer: generatedCustomers[5]._id,
     amount: 34577,
     status: "pending",
-    date: "2023-08-05",
+    date: setUTCDate("2023-08-05"),
   },
   {
     customer_id: generatedCustomers[7].id,
     customer: generatedCustomers[7]._id,
     amount: 54246,
     status: "pending",
-    date: "2023-07-16",
+    date: setUTCDate("2023-07-16"),
   },
   {
     customer_id: generatedCustomers[6].id,
     customer: generatedCustomers[6]._id,
     amount: 666,
     status: "pending",
-    date: "2023-06-27",
+    date: setUTCDate("2023-06-27"),
   },
   {
     customer_id: generatedCustomers[3].id,
     customer: generatedCustomers[3]._id,
     amount: 32545,
     status: "paid",
-    date: "2023-06-09",
+    date: setUTCDate("2023-06-09"),
   },
   {
     customer_id: generatedCustomers[4].id,
     customer: generatedCustomers[4]._id,
     amount: 1250,
     status: "paid",
-    date: "2023-06-17",
+    date: setUTCDate("2023-06-17"),
   },
   {
     customer_id: generatedCustomers[5].id,
     customer: generatedCustomers[5]._id,
     amount: 8546,
     status: "paid",
-    date: "2023-06-07",
+    date: setUTCDate("2023-06-07"),
   },
   {
     customer_id: generatedCustomers[1].id,
     customer: generatedCustomers[1]._id,
     amount: 500,
     status: "paid",
-    date: "2023-08-19",
+    date: setUTCDate("2023-08-19"),
   },
   {
     customer_id: generatedCustomers[5].id,
     customer: generatedCustomers[5]._id,
     amount: 8945,
     status: "paid",
-    date: "2023-06-03",
+    date: setUTCDate("2023-06-03"),
   },
   {
     customer_id: generatedCustomers[2].id,
     customer: generatedCustomers[2]._id,
     amount: 8945,
     status: "paid",
-    date: "2023-06-18",
+    date: setUTCDate("2023-06-18"),
   },
   {
     customer_id: generatedCustomers[0].id,
     customer: generatedCustomers[0]._id,
     amount: 8945,
     status: "paid",
-    date: "2023-10-04",
+    date: setUTCDate("2023-10-04"),
   },
   {
     customer_id: generatedCustomers[2].id,
     customer: generatedCustomers[2]._id,
     amount: 1000,
     status: "paid",
-    date: "2022-06-05",
+    date: setUTCDate("2022-06-05"),
   },
 ];
 

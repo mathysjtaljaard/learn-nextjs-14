@@ -128,24 +128,21 @@ export async function fetchInvoicesPages(query: string) {
 //   }
 // }
 
-// export async function fetchCustomers() {
-  // noStore();
-//   try {
-//     const data = await sql<CustomerField>`
-//       SELECT
-//         id,
-//         name
-//       FROM customers
-//       ORDER BY name ASC
-//     `;
-
-//     const customers = data.rows;
-//     return customers;
-//   } catch (err) {
-//     console.error('Database Error:', err);
-//     throw new Error('Failed to fetch all customers.');
-//   }
-// }
+export async function fetchCustomers() {
+  noStore();
+  try {
+    const customers = await customerService.findAll(undefined, 'name');
+    return customers.map(({_id, name}) => {
+      return {
+        id: _id.toString(),
+        name
+      }
+    });
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch all customers.');
+  }
+}
 
 // export async function fetchFilteredCustomers(query: string) {
   // noStore();

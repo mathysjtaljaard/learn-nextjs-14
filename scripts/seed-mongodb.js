@@ -45,16 +45,9 @@ async function seedCustomers() {
 
 async function seedInvoices(createdCustomers) {
   try {
-    return await Promise.all(
-      getInvoices(createdCustomers).map(
-        async (invoice) => {
-          const newInvoice = await invoiceService.createOrUpdate(invoice)
-          const customer = await customerService.findById(invoice.customer_id)
-          customer.invoices.push(newInvoice._id)
-          await customer.save()
-        }
-      )
-    );
+    for (const invoice of getInvoices(createdCustomers)) {
+      await invoiceService.createOrUpdate(invoice)
+    }
   } catch (error) {
     console.error("Error seeding invoices:", error);
     throw error;

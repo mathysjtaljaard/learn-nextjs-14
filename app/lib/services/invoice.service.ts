@@ -2,6 +2,7 @@ import { flatten } from "lodash";
 import { AInvoice } from "../models/invoice.model";
 import { InvoiceRepository } from "../repositories/invoice.repository";
 import { CustomerService, customerService } from "./customer.service";
+
 export enum SORT_ORDER {
   ASC = "asc",
   DESC = "desc",
@@ -23,7 +24,17 @@ class InvoiceService {
     if (invoice?.id) {
       return await this.repository.update(invoice);
     }
-    return await this.repository.create(invoice);
+    const customer: any = await this.customerService.findByObjectId(
+      invoice.customer
+    );
+    if (!customer) {
+      throw Error(
+        `Customer does not exist = customer value given ${invoice.customer} `
+      );
+    }
+    const newInvoice = await this.repository.create(invoice);
+    customer?.invoices.push(newInvoice._id);
+    await customerService.createOrUpdate(customer);
   }
 
   async findAll() {
@@ -35,15 +46,14 @@ class InvoiceService {
   }
 
   async findByTerm(term: string, limit?: number, offset?: number) {
-    const regexTerm = new RegExp(term, 'ig');
-    console.log(regexTerm)
+    const regexTerm = new RegExp(term?.replace(/\s+/g, '.*'), "ig");
     let orClause: any = [
       { status: regexTerm },
       {
         $expr: {
           $function: {
             body: `function body(amount, regexTerm) {
-              return amount.toString().match(regexTerm);
+              return (amount.toString().match(regexTerm) !== null);
             }`,
             args: ["$amount", regexTerm],
             lang: "js",
@@ -54,7 +64,13 @@ class InvoiceService {
         $expr: {
           $function: {
             body: `function body(date, regexTerm) {
-              return new Date(date).toUTCString().match(regexTerm);
+              try {
+                var options = {timeZone: 'UTC', month: 'short', day: 'numeric', year: 'numeric' }
+                var locale = 'en-US'
+                return (new Date(date).toLocaleString(locale, options).match(regexTerm) !== null);
+              } catch (e) {
+                return false
+              }
             }`,
             args: ["$date", regexTerm],
             lang: "js",
@@ -67,18 +83,22 @@ class InvoiceService {
     if (matchedCustomers?.length > 0) {
       const result = flatten(
         matchedCustomers.map(({ invoices }) =>
-          invoices.map((value: { _id: any }) => value._id)
+          invoices.map((value: { _id: any }) => value)
         )
       );
       if (result.length > 0) {
-        orClause.push({ _id: { $in: result } });
+        orClause.push({ _id: { $in: [...result] } });
       }
     }
 
     let queryTerm: any = {
-      $or: orClause
+      $or: orClause,
     };
-    const matchedInvoices = await this.repository.findByQuery(queryTerm, limit, offset);
+    const matchedInvoices = await this.repository.findByQuery(
+      queryTerm,
+      limit,
+      offset
+    );
     return matchedInvoices;
   }
 
