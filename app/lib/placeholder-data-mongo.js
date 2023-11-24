@@ -65,7 +65,9 @@ const customers = [
 ];
 
 const setUTCDate = (value) => {
-  return new Date(value).valueOf()
+  // return new Date(value).valueOf()
+  return new Date(value)
+
 }
 
 const getInvoices = (generatedCustomers) => [
