@@ -126,17 +126,11 @@ export async function fetchInvoiceById(id: string): Promise<any> {
       status,
       amount,
       date,
-    } = (await invoiceService.findById(id)) || {
-      id: "",
-      customer: "",
-      status: "",
-      amount: 0,
-      date: Date.now()
-    };
+    } = await invoiceService.findById(id)
 
     return {
       id: invoiceId,
-      customer_id: customer?._id.toString(),
+      customer_id: customer?._id?.toString(),
       status,
       amount: amount / 100,
       date

@@ -6,6 +6,7 @@ import { lusitana } from "@/app/ui/fonts";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
 import { fetchInvoicesPages } from '@/app/lib/data';
+import { init } from "@/app/middleware";
 
 // search params is a prop that's available to the page
 // when the app sets the query params using the useSearchParams hook on the client 
@@ -21,7 +22,8 @@ export default async function Page({
     page?: string;
   };
 }) {
-
+  const state = await (await init()).dbConnectionState
+  console.debug('Invoices Page - Database connection - ', state)
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page || 1);
   
