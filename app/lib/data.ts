@@ -1,8 +1,9 @@
-import { formatCurrency } from './utils';
-import { revenueService } from './services/revenue.service';
-import { SORT_ORDER, invoiceService } from './services/invoice.service';
-import { customerService } from './services/customer.service';
-import { unstable_noStore as noStore } from 'next/cache';
+import { formatCurrency } from "./utils";
+import { revenueService } from "./services/revenue.service";
+import { SORT_ORDER, invoiceService } from "./services/invoice.service";
+import { customerService } from "./services/customer.service";
+import { unstable_noStore as noStore } from "next/cache";
+import { CustomerField } from "./definitions";
 
 export async function fetchRevenue() {
   noStore();
@@ -13,15 +14,15 @@ export async function fetchRevenue() {
 
     return revenue;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch revenue data.");
   }
 }
 
 export async function fetchLatestInvoices() {
   noStore();
   try {
-   const invoices = await invoiceService.find({date: SORT_ORDER.DESC}, 5)
+    const invoices = await invoiceService.find({ date: SORT_ORDER.DESC }, 5);
     const latestInvoices = invoices.map((invoice: any) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
@@ -29,8 +30,8 @@ export async function fetchLatestInvoices() {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     return latestInvoices;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch the latest invoices.");
   }
 }
 
@@ -42,20 +43,23 @@ export async function fetchCardData() {
     // how to initialize multiple queries in parallel with JS.
     const invoiceCountPromise = invoiceService.getTotalCount();
     const customerCountPromise = customerService.getTotalCount();
-    const invoiceStatusPromise = invoiceService.getTotalCountsGroupedBy('status', 'amount')
+    const invoiceStatusPromise = invoiceService.getTotalCountsGroupedBy(
+      "status",
+      "amount"
+    );
 
-    const [invoiceCount, customerCount, {pending, paid}] = await Promise.all([
+    const [invoiceCount, customerCount, { pending, paid }] = await Promise.all([
       invoiceCountPromise,
       customerCountPromise,
       invoiceStatusPromise,
     ]);
 
-    const numberOfInvoices = Number(invoiceCount ?? '0');
-    const numberOfCustomers = Number(customerCount ?? '0');
- 
-    const totalPaidInvoices = formatCurrency(paid ?? '0');
-    const totalPendingInvoices = formatCurrency(pending ?? '0');
-  
+    const numberOfInvoices = Number(invoiceCount ?? "0");
+    const numberOfCustomers = Number(customerCount ?? "0");
+
+    const totalPaidInvoices = formatCurrency(paid ?? "0");
+    const totalPendingInvoices = formatCurrency(pending ?? "0");
+
     await new Promise((resolve) => setTimeout(resolve, 1999));
     return {
       numberOfCustomers,
@@ -64,88 +68,102 @@ export async function fetchCardData() {
       totalPendingInvoices,
     };
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to card data.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to card data.");
   }
 }
 
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
   query: string,
-  currentPage: number,
+  currentPage: number
 ) {
   noStore();
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const invoices = await invoiceService.findByTerm(query, ITEMS_PER_PAGE, offset)
-    return invoices.map( ({id, amount, status, date, customer}) => {
-      const {name, image_url, email} = customer
+    const invoices = await invoiceService.findByTerm(
+      query,
+      ITEMS_PER_PAGE,
+      offset
+    );
+    return invoices.map(({ id, amount, status, date, customer }) => {
+      const { name, image_url, email } = customer;
       return {
-        id, name, email, status, amount, date, image_url
-      }
-    })
+        id,
+        name,
+        email,
+        status,
+        amount,
+        date,
+        image_url,
+      };
+    });
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch invoices.");
   }
 }
 
 export async function fetchInvoicesPages(query: string) {
   noStore();
   try {
-    const invoices = await invoiceService.findByTerm(query)
+    const invoices = await invoiceService.findByTerm(query);
     const totalPages = Math.ceil(Number(invoices.length) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of invoices.");
   }
 }
 
-// export async function fetchInvoiceById(id: string) {
-  // noStore();
-//   try {
-//     const data = await sql<InvoiceForm>`
-//       SELECT
-//         invoices.id,
-//         invoices.customer_id,
-//         invoices.amount,
-//         invoices.status
-//       FROM invoices
-//       WHERE invoices.id = ${id};
-//     `;
-
-//     const invoice = data.rows.map((invoice) => ({
-//       ...invoice,
-//       // Convert amount from cents to dollars
-//       amount: invoice.amount / 100,
-//     }));
-
-//     return invoice[0];
-//   } catch (error) {
-//     console.error('Database Error:', error);
-//   }
-// }
-
-export async function fetchCustomers() {
+export async function fetchInvoiceById(id: string): Promise<any> {
   noStore();
   try {
-    const customers = await customerService.findAll(undefined, 'name');
-    return customers.map(({_id, name}) => {
+    const {
+      id: invoiceId,
+      customer,
+      status,
+      amount,
+      date,
+    } = (await invoiceService.findById(id)) || {
+      id: "",
+      customer: "",
+      status: "",
+      amount: 0,
+      date: Date.now()
+    };
+
+    return {
+      id: invoiceId,
+      customer_id: customer?._id.toString(),
+      status,
+      amount: amount / 100,
+      date
+    };
+  } catch (error) {
+    console.error("Database Error:", error);
+  }
+}
+
+export async function fetchCustomers(): Promise<CustomerField[]> {
+  noStore();
+  try {
+    const customers = await customerService.findAll(undefined, "name");
+    return customers.map(({ _id, name }) => {
       return {
         id: _id.toString(),
-        name
-      }
+        name,
+      };
     });
   } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch all customers.");
   }
 }
 
 // export async function fetchFilteredCustomers(query: string) {
-  // noStore();
+// noStore();
 //   try {
 //     const data = await sql<CustomersTable>`
 // 		SELECT
@@ -179,7 +197,7 @@ export async function fetchCustomers() {
 // }
 
 // export async function getUser(email: string) {
-  // noStore();
+// noStore();
 //   try {
 //     const user = await sql`SELECT * from USERS where email=${email}`;
 //     return user.rows[0] as User;

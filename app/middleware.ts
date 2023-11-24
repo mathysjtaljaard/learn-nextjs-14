@@ -1,15 +1,11 @@
 import dbConnect from "./lib/connectors/mongodb/mongoose-connector";
-
+import { STATES } from "mongoose";
 let dbConnection: any;
 
-async function _getConnection(debug: boolean) {
-  dbConnection = await dbConnect();
-}
-
-async function init(debug = false) {
-  await _getConnection(debug);
+async function init() {
+  dbConnection = await dbConnect(process.env.MONGO_DB_DEBUG_ENABLED === 'true');
   return {
-    database: dbConnection,
+    dbConnectionState: STATES[dbConnection.connection.readyState],
   };
 }
 

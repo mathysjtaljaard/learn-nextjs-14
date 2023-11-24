@@ -42,7 +42,7 @@ export class InvoiceRepository extends AbstractRepository {
     ]);
   }
   async getById(id: string) {
-    return await Invoice.findById({ id }).populate("customer");
+    return await Invoice.findOne({ id }).populate("customer");
   }
 
   async create(invoice: AInvoice) {

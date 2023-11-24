@@ -46,7 +46,7 @@ class InvoiceService {
   }
 
   async findByTerm(term: string, limit?: number, offset?: number) {
-    const regexTerm = new RegExp(term?.replace(/\s+/g, '.*'), "ig");
+    const regexTerm = new RegExp(term?.replace(/\s+/g, ".*"), "ig");
     let orClause: any = [
       { status: regexTerm },
       {
@@ -134,8 +134,21 @@ class InvoiceService {
     });
   }
 
+  async findById(invoiceGuid: string) {
+    return await this.repository.getById(invoiceGuid);
+  }
   async deleteAll() {
     await this.repository.deleteAll();
+  }
+
+  async deleteInvoice(id: string) {
+    const { _id, customer} = await this.repository.getById(id);
+    if (customer?.invoices) {
+      customer.invoices = customer.invoices.filter((invoice: { toString: () => any; }) => invoice.toString() !== _id.toString())
+    }
+      
+    await this.repository.deleteById(id)
+    await this.customerService.createOrUpdate(customer)
   }
 }
 

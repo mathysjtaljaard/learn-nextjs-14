@@ -4,13 +4,13 @@ export type AInvoice = {
   id?: string;
   customer: string;
   amount: number;
-  date: Date;
+  date?: Date;
   status: "pending" | "paid";
 };
 
 interface IInvoice extends mongoose.Document {
   id: string;
-  date: Date;
+  date?: Date;
   amount: number;
   customer: Schema.Types.ObjectId; 
   status: "pending" | "paid";
@@ -27,7 +27,7 @@ export const InvoiceSchema = new mongoose.Schema<IInvoice>(
       type: Types.ObjectId,
       ref: 'Customer'
     },
-    date: { type: Date, required: true },
+    date: { type: Date, default: Date.now() },
     amount: { type: Number, required: true },
     status: {
       type: String,

@@ -20,7 +20,7 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function dbConnect() {
+async function dbConnect(enableDebug = false) {
   if (cached.conn) {
     return cached.conn;
   }
@@ -29,7 +29,7 @@ async function dbConnect() {
       bufferCommands: false,
     };
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      mongoose.set('debug', true)
+      mongoose.set('debug', enableDebug)
       return mongoose;
     });
   }

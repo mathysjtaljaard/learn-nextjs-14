@@ -49,6 +49,10 @@ export class CustomerService {
   async deleteAll() {
     await this.repository.deleteAll();
   }
+
+  async deleteById(id: string) {
+    await this.repository.deleteById(id)
+  }
 }
 
 const customerService = new CustomerService(new CustomerRepository());
