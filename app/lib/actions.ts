@@ -26,7 +26,7 @@ export async function createInvoice(formData: FormData) {
     amount: amount * 100,
     customer,
     status,
-    date: new Date().valueOf()
+    date: new Date()
   })
 
   revalidatePath('/dashboard/invoices')

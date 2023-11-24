@@ -65,9 +65,11 @@ class InvoiceService {
           $function: {
             body: `function body(date, regexTerm) {
               try {
-                var options = {timeZone: 'UTC', month: 'short', day: 'numeric', year: 'numeric' }
-                var locale = 'en-US'
-                return (new Date(date).toLocaleString(locale, options).match(regexTerm) !== null);
+                var options = {timeZone: 'UTC', month: 'short', day: 'numeric', year: 'numeric' };
+                var locale = 'en-US';
+                var dateValue = new Date(date).toLocaleString(undefined, options);
+                var modifiedDate = dateValue.substring(0, dateValue.length - 14);
+                return (modifiedDate.match(regexTerm) !== null);
               } catch (e) {
                 return false
               }

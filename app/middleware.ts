@@ -1,11 +1,16 @@
 import dbConnect from "./lib/connectors/mongodb/mongoose-connector";
 
-async function _getConnection() {
-  await dbConnect();
+let dbConnection: any;
+
+async function _getConnection(debug: boolean) {
+  dbConnection = await dbConnect();
 }
 
-async function connect() {
-  await _getConnection();
+async function init(debug = false) {
+  await _getConnection(debug);
+  return {
+    database: dbConnection,
+  };
 }
 
-export default connect
+export { init };
