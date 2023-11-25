@@ -126,6 +126,7 @@ export async function fetchInvoicesPages(query: string) {
 }
 
 export async function fetchInvoiceById(id: string): Promise<any> {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   noStore();
   try {
     const {

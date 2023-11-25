@@ -6,8 +6,6 @@ import { lusitana } from "@/app/ui/fonts";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
 import { fetchInvoicesPages } from '@/app/lib/data';
-import { init } from "@/app/middleware";
-
 // search params is a prop that's available to the page
 // when the app sets the query params using the useSearchParams hook on the client 
 // the page is updated with the updated params, forcing a re-render of the page with the 

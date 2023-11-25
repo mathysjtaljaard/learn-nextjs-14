@@ -5,7 +5,8 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
-    "seed-mongo": "ts-node -r dotenv/config ./scripts/seed-mongodb.js"
+    "seed-mongo": "ts-node -r dotenv/config ./scripts/seed-mongodb.js",
+    "lint": "next lint"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -36,6 +37,8 @@
     "@types/react-dom": "18.2.14",
     "@types/validator": "^13.11.6",
     "dotenv": "^16.3.1",
+    "eslint": "8.54.0",
+    "eslint-config-next": "14.0.3",
     "prettier": "^3.0.3",
     "prisma": "^5.5.2",
     "ts-node": "^10.9.1"
