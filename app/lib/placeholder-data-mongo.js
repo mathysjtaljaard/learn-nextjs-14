@@ -7,7 +7,7 @@ const users = [
   {
     name: "User",
     email: "user@nextmail.com",
-    password: "12345612232345234121112312321",
+    password: "123456",
   },
 ];
 

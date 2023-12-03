@@ -4,7 +4,7 @@ import { SORT_ORDER, invoiceService } from "./services/invoice.service";
 import { customerService } from "./services/customer.service";
 import { unstable_noStore as noStore } from "next/cache";
 import { CustomerField } from "./definitions";
-import { init } from "../middleware";
+import { init } from "../../middleware";
 
 // TODO: does this look like a good candidate for a controller level or split these off into their corresponding services??
 async function establish() {
