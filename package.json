@@ -1,9 +1,12 @@
 {
   "private": true,
+  "notes:": "apply-schema-updates: prisma db push",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "start": "next start"
+    "start": "next start",
+    "seed-mongo": "ts-node -r dotenv/config ./scripts/seed-mongodb.js",
+    "lint": "next lint"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -13,20 +16,33 @@
     "autoprefixer": "10.4.15",
     "bcrypt": "^5.1.1",
     "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.0.0",
     "next": "^14.0.0",
+    "next-auth": "^5.0.0-beta.4",
     "postcss": "8.4.31",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.3",
     "typescript": "5.2.2",
+    "use-debounce": "^10.0.0",
+    "uuid": "^9.0.1",
+    "validator": "^13.11.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.1",
+    "@types/lodash": "^4.14.201",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.14",
+    "@types/validator": "^13.11.6",
     "dotenv": "^16.3.1",
-    "prettier": "^3.0.3"
+    "eslint": "8.54.0",
+    "eslint-config-next": "14.0.3",
+    "prettier": "^3.0.3",
+    "prisma": "^5.5.2",
+    "ts-node": "^10.9.1"
   },
   "engines": {
     "node": ">=18"

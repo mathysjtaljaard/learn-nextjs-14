@@ -1,0 +1,41 @@
+// // This is your Prisma schema file,
+// // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = env("DATABASE_URL")
+// }
+
+// // User model
+// model User {
+//   id       String @id @default(auto()) @map("_id") @db.ObjectId
+//   name     String
+//   email    String @unique
+//   password String
+// }
+
+// // Customer 
+// model Customer {
+//   id             String    @id @default(auto()) @map("_id") @db.ObjectId
+//   name           String
+//   email          String    @unique
+//   image_url      String
+//   total_invoices Int
+//   total_pending  Float
+//   total_paid     Float
+//   invoices       Invoice[]
+// }
+
+// // Invoice
+// model Invoice {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   customer    Customer @relation(fields: [customer_id], references: [id])
+//   customer_id String   @db.ObjectId
+//   date DateTime
+//   amount Float
+//   status String
+// }
